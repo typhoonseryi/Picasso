@@ -1,0 +1,46 @@
+version: '3'
+services:
+  service:
+    build:
+      context: ./app
+      dockerfile: ../Dockerfile
+    volumes:
+      - ./app:/home/src/app
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+    depends_on:
+      - service
+    ports:
+      - "80:80"
+    networks:
+      - backend
+
+  db:
+    image: postgres:13
+    expose:
+      - "5432"
+#    ports:
+#      - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    env_file: psql.env
+    networks:
+      - backend
+
+volumes:
+  postgresql:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge

@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Domains ListApi
+  version: v1
+servers:
+  - url: https://127.0.0.1:80
+paths:
+  /api/v1/domains:
+    get:
+      description: ""
+      parameters:
+        - name: url_name
+          in: query
+          description: Фильтрация по url
+          required: false
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: Фильтрация по стране
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: Фильтрация по обслуживанию сайта
+          required: false
+          schema:
+            type: string
+            enum: [alive, dead]
+        - name: sort
+          in: query
+          description: Сортировку по полю
+          required: false
+          schema:
+            type: string
+            enum: [domain, create_date, -create_date, update_date, -update_date]
+        - name: page
+          in: query
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          description: Размер страницы
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Количество объектов
+                    example: 1000
+                  total_pages:
+                    type: integer
+                    description: Количество страниц
+                    example: 20
+                  prev:
+                    type: integer
+                    nullable: true
+                    description: Номер предыдущей страницы
+                    example: 1
+                  next:
+                    type: integer
+                    nullable: true
+                    description: Номер следующей страницы
+                    example: 2
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Domain"
+
+components:
+  schemas:
+    Domain:
+      type: object
+      properties:
+        url_name:
+          type: string
+        domain:
+          type: string
+        create_date:
+          type: string
+          format: date
+        update_date:
+          type: string
+          format: date
+        country:
+          type: string
+        is_dead:
+          type: boolean
+        a:
+          type: array
+          items:
+            type: string
+        ns:
+          type: array
+          items:
+            type: string
+        cname:
+          type: array
+          items:
+            type: string
+        mx:
+          type: object
+          properties:
+            exchange:
+              type: string
+            priority:
+              type: integer
+        txt:
+          type: array
+          items:
+            type: string
